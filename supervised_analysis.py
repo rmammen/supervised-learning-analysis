@@ -1,5 +1,5 @@
 """
-Module 6: Supervised Learning — Predicting Career Alignment Archetypes
+Module 6: Supervised Learning - Predicting Career Alignment Archetypes
 INST414 - Data Science Techniques
 Building on Module 4 clustering of FiveThirtyEight College Majors dataset
 
@@ -20,9 +20,8 @@ from sklearn.decomposition import PCA
 import warnings
 warnings.filterwarnings('ignore')
 
-# ─────────────────────────────────────────────
-# 1. DATASET
-# ─────────────────────────────────────────────
+#DATASET
+
 data = {
     'Major': [
         'Petroleum Engineering', 'Mining And Mineral Engineering',
@@ -164,9 +163,8 @@ data = {
 
 df = pd.DataFrame(data)
 
-# ─────────────────────────────────────────────
-# 2. RECREATE MODULE 4 CLUSTERS
-# ─────────────────────────────────────────────
+# CREATE CLUSTERS
+
 features = ['Median','Unemployment_rate','Full_time_rate','College_job_rate','Low_wage_rate']
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(df[features])
@@ -187,9 +185,9 @@ df['Cluster_name'] = df['Cluster'].map(label_map)
 print("Cluster distribution:")
 print(df['Cluster_name'].value_counts())
 
-# ─────────────────────────────────────────────
-# 3. KNN — LEAVE-ONE-OUT CROSS VALIDATION
-# ─────────────────────────────────────────────
+
+# KNN LEAVE-ONE-OUT CROSS VALIDATION
+
 # Use k=5 (odd number avoids ties, large enough for stability)
 K = 5
 loo = LeaveOneOut()
@@ -219,9 +217,8 @@ for k in k_vals:
 best_k = list(k_vals)[np.argmax(k_accs)]
 print(f"\nBest k = {best_k} (acc={max(k_accs):.3f})")
 
-# ─────────────────────────────────────────────
-# 4. MISCLASSIFIED SAMPLES
-# ─────────────────────────────────────────────
+# MISCLASSIFIED SAMPLES
+
 wrong = df[~df['Correct']].copy()
 print(f"\nMisclassified ({len(wrong)} total):")
 print(wrong[['Major','Cluster_name','LOO_pred_name',
@@ -248,9 +245,8 @@ print(f"\n5 focus cases:")
 print(five_cases[['Major','Cluster_name','LOO_pred_name','note',
                    'College_job_rate','Median','Unemployment_rate']].to_string())
 
-# ─────────────────────────────────────────────
-# 5. FULL MODEL METRICS (train on all, evaluate on all — for report table)
-# ─────────────────────────────────────────────
+# FULL MODEL METRICS (train on all, evaluate on all — for report table)
+
 knn_full = KNeighborsClassifier(n_neighbors=K)
 knn_full.fit(X_scaled, y)
 y_pred_full = knn_full.predict(X_scaled)
@@ -258,9 +254,9 @@ print("\nFull training classification report:")
 target_names_list = [label_map[i] for i in sorted(label_map.keys())]
 print(classification_report(y, y_pred_full, target_names=target_names_list))
 
-# ─────────────────────────────────────────────
-# 6. FIGURES
-# ─────────────────────────────────────────────
+
+#  FIGURES
+
 palette = {
     'Elite Technical Fields': '#1565C0',
     'Credentialed Pipelines': '#2E7D32',
@@ -274,7 +270,7 @@ coords = pca.fit_transform(X_scaled)
 df['PCA1'] = coords[:,0]
 df['PCA2'] = coords[:,1]
 
-# ── Fig 1: k-selection curve ──────────────────
+# Fig 1: k-selection curve 
 fig, ax = plt.subplots(figsize=(8,4))
 ax.plot(list(k_vals), k_accs, 'o-', color='#3F51B5', lw=2, ms=7)
 ax.axvline(x=best_k, color='crimson', ls='--', alpha=0.8, label=f'Best k={best_k}')
@@ -289,7 +285,7 @@ plt.savefig('/mnt/user-data/outputs/fig1_k_accuracy.png', dpi=150, bbox_inches='
 plt.close()
 print("Saved fig1")
 
-# ── Fig 2: PCA scatter — true vs LOO predicted ───
+# Fig 2: PCA scatter - true vs LOO predicted
 fig, axes = plt.subplots(1, 2, figsize=(14,6))
 for ax, col, title in zip(
     axes,
@@ -315,7 +311,7 @@ plt.savefig('/mnt/user-data/outputs/fig2_pca_scatter.png', dpi=150, bbox_inches=
 plt.close()
 print("Saved fig2")
 
-# ── Fig 3: Confusion matrix (LOO) ────────────
+# Fig 3: Confusion matrix (LOO) 
 cm = confusion_matrix(df['Cluster'], df['LOO_pred'])
 fig, ax = plt.subplots(figsize=(7,6))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
@@ -332,7 +328,7 @@ plt.savefig('/mnt/user-data/outputs/fig3_confusion_matrix.png', dpi=150, bbox_in
 plt.close()
 print("Saved fig3")
 
-# ── Fig 4: Cluster feature heatmap ───────────
+# Fig 4: Cluster feature heatmap
 summary = df.groupby('Cluster_name')[features].mean()
 fig, ax = plt.subplots(figsize=(10,5))
 summary_norm = (summary - summary.min()) / (summary.max() - summary.min())
@@ -347,7 +343,7 @@ plt.savefig('/mnt/user-data/outputs/fig4_cluster_heatmap.png', dpi=150, bbox_inc
 plt.close()
 print("Saved fig4")
 
-# ── Fig 5: 5 focus cases ─────────────────────
+# Fig 5: 5 focus cases
 fig, ax = plt.subplots(figsize=(11,5))
 x = np.arange(len(five_cases))
 w = 0.35
@@ -373,9 +369,8 @@ plt.savefig('/mnt/user-data/outputs/fig5_focus_cases.png', dpi=150, bbox_inches=
 plt.close()
 print("Saved fig5")
 
-# ─────────────────────────────────────────────
-# 7. PRINT FINAL SUMMARY TABLE
-# ─────────────────────────────────────────────
+# PRINT FINAL SUMMARY TABLE
+
 print("\n=== Cluster Summary ===")
 summary2 = df.groupby('Cluster_name')[features].mean().round(3)
 summary2['n'] = df['Cluster_name'].value_counts()
