@@ -1,11 +1,3 @@
-"""
-Module 6: Supervised Learning - Predicting Career Alignment Archetypes
-INST414 - Data Science Techniques
-Building on Module 4 clustering of FiveThirtyEight College Majors dataset
-
-Author: Rmammen
-"""
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
