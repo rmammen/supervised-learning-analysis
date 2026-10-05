@@ -28,7 +28,7 @@ The goal is to classify college majors into one of four archetypes based on feat
 - **Confusion Matrix**: High consistency between K-Means labels and KNN predictions, with minor misclassifications occurring primarily at cluster boundaries.
 
 ## Key Figures Generated
-The script outputs several visualizations to `/mnt/user-data/outputs/`:
+The script outputs several visualizations to `figures/`:
 * `fig1_k_accuracy.png`: Optimization curve for selecting the best *k*.
 * `fig2_pca_scatter.png`: Comparison of True (K-Means) vs. Predicted (KNN) labels in a 2D PCA space.
 * `fig3_confusion_matrix.png`: Heatmap showing where the model confuses archetypes.
